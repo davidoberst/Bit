@@ -8,7 +8,6 @@ venv/
 .env
 
 
-*.png
 *.wav
 *.mp3
 tmp/
