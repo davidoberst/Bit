@@ -8,7 +8,7 @@ from scipy.io.wavfile import write
 # Variables de control para R.E.D.
 is_muted = False
 audio_frequency = 16000 #(Hz)
-audio_buffer = [] 
+audio_buffer = []   
 
 def audio_callback(indata, frames, time, status):
     global is_muted
