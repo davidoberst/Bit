@@ -1,15 +1,16 @@
 # =====================================================================
-# 🚀 R.E.D. - ARCHIVO MAESTRO DE CONTROL (main.py)
+# R.E.D. - ARCHIVO MAESTRO DE CONTROL (main.py)
 # =====================================================================
 
 import time
 import sounddevice as sd
-import audio_controller       # Importa tu archivo audio_controller.py
-import vision_controller      # Importa tu archivo vision_controller.py
+import audio_controller       
+import vision_controller      
 import brain      
 import traceback
-import sys            # Importa tu archivo brain.py
-
+import sys            
+import speaker_controller
+from delete_temp_files import delete_temp_files
 def ejecutar_ciclo_asistencia():
     print("\n" + "="*50)
     print("R.E.D. SYSTEM - SECUENCIA DE CONSULTA INICIADA")
@@ -28,7 +29,7 @@ def ejecutar_ciclo_asistencia():
     )
     
     with stream:
-        time.sleep(10) 
+        time.sleep(20) 
         
     print("[*] Procesando muestras de voz locales...")
     audio_controller.save_audio_output() # Guarda 'audio_output.wav'
@@ -51,6 +52,11 @@ def ejecutar_ciclo_asistencia():
         print("═"*50)
         print(respuesta_ia)
         print("═"*50 + "\n")
+
+        speaker_controller.hablar(respuesta_ia) #respuesta por voz
+        delete_temp_files()
+
+
     else:
         print("[-] No se pudo obtener respuesta del cerebro.")
 
@@ -67,3 +73,4 @@ if __name__ == "__main__":
         tb = e.__traceback__
         linea = traceback.extract_tb(tb)[-1].lineno
         print(f"\n[-] Error inesperado en el núcleo del sistema: {e} Linea :{linea}")
+    

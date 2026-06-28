@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import time
 
 def take_screenshot(filename="snapshot.png"):
     """
@@ -25,6 +26,7 @@ def take_screenshot(filename="snapshot.png"):
         else:
             print("[-] Error: El archivo de imagen no fue generado.")
             return False
+        
             
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         print(f"[-] Fallo en driver de vision: {e}")
