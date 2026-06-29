@@ -15,7 +15,7 @@ from delete_temp_files import delete_temp_files
 
 def ejecutar_ciclo_asistencia():
     print("\n" + "="*50)
-    print("R.E.D. SYSTEM - SECUENCIA DE CONSULTA INICIADA")
+    print("R.E.D INICIADO")
     print("="*50)
     
     # 1. Limpiar el buffer usando el nombre correcto del módulo
@@ -61,10 +61,10 @@ def ejecutar_ciclo_asistencia():
 
 
     else:
-        print("[-] No se pudo obtener respuesta del cerebro.")
+        print("[-] No se pudo obtener respuesta de la API.")
 
 if __name__ == "__main__":
-    print("[*] Inicializando sistemas principales de R.E.D...")
+    print("[*] Inicializando RED")
     print("[+] Servidor gráfico KDE Wayland detectado a través de Spectacle.")
     print("[+] Frecuencia de audio optimizada a 16kHz.")
     
@@ -75,5 +75,5 @@ if __name__ == "__main__":
     except Exception as e:
         tb = e.__traceback__
         linea = traceback.extract_tb(tb)[-1].lineno
-        print(f"\n[-] Error inesperado en el núcleo del sistema: {e} Linea :{linea}")
+        print(f"\n[-] Error inesperado en RED: {e} Linea :{linea}")
     
