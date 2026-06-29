@@ -3,6 +3,7 @@
 # =====================================================================
 
 import time
+import keyboard
 import sounddevice as sd
 import audio_controller       
 import vision_controller      
@@ -11,6 +12,7 @@ import traceback
 import sys            
 import speaker_controller
 from delete_temp_files import delete_temp_files
+
 def ejecutar_ciclo_asistencia():
     print("\n" + "="*50)
     print("R.E.D. SYSTEM - SECUENCIA DE CONSULTA INICIADA")
@@ -21,7 +23,7 @@ def ejecutar_ciclo_asistencia():
     audio_controller.is_muted = False
     
     # 2. Iniciar la escucha activa por el micrófono
-    print("\n Escuchando... Habla ahora (Tienes 10 segundos de grabación)")
+    print("\n Escuchando... Habla ahora (Tienes 1 minuto de grabación, presiona x para pararla.)")
     stream = sd.InputStream(
         samplerate=audio_controller.audio_frequency, 
         channels=1, 
@@ -29,7 +31,8 @@ def ejecutar_ciclo_asistencia():
     )
     
     with stream:
-        time.sleep(20) 
+     input(" Presiona ENTER para detener la grabación y enviar a R.E.D... ")
+     print("\n[+] Grabación finalizada por el usuario.")
         
     print("[*] Procesando muestras de voz locales...")
     audio_controller.save_audio_output() # Guarda 'audio_output.wav'
