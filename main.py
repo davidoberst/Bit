@@ -57,7 +57,9 @@ def ejecutar_ciclo_asistencia():
         print("═"*50)
         print(respuesta_ia)
         print("═"*50 + "\n")
+        
 
+        
         speaker_controller.hablar(respuesta_ia) #respuesta por voz
        
 
