@@ -25,7 +25,7 @@ REGLAS ABSOLUTAS DE SALIDA:
 Háblale siempre de 'tú' y llámalo por su nombre, Juan.
 """
 
-def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.png"):
+def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg"):
     print("[*] Conectando con API de RED")
 
     #Verificar si existen antes de leerlos
@@ -56,7 +56,7 @@ def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.png
             model='gemini-2.5-flash',
             contents=[
                 # EmpaquetAMIUENTO de los bytes 
-                types.Part.from_bytes(data=image_binary, mime_type='image/png'),
+                types.Part.from_bytes(data=image_binary, mime_type='image/jpeg'),
                 types.Part.from_bytes(data=audio_binary, mime_type='audio/wav'),
                 "Analiza el audio y la captura de pantalla de mi entorno actual para responder a mi solicitud."
             ],

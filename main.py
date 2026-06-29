@@ -14,6 +14,8 @@ import speaker_controller
 from delete_temp_files import delete_temp_files
 
 def ejecutar_ciclo_asistencia():
+    delete_temp_files()
+
     print("\n" + "="*50)
     print("R.E.D INICIADO")
     print("="*50)
@@ -57,7 +59,7 @@ def ejecutar_ciclo_asistencia():
         print("═"*50 + "\n")
 
         speaker_controller.hablar(respuesta_ia) #respuesta por voz
-        delete_temp_files()
+       
 
 
     else:

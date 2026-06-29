@@ -4,9 +4,9 @@ import subprocess
 import os
 import time
 
-def take_screenshot(filename="snapshot.png"):
+def take_screenshot(filename="snapshot.jpg"):
     """
-    Captura todas las pantallas activas usando el motor nativo de KDE (Spectacle) entornos Wayland.
+    Captura TODOS los monitores activos usando Spectacle, optimizado en JPEG para transmisión rápida.
     """
     print("[*] R.E.D. esta escaneando tus monitores...")
     
