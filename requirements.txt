@@ -1,0 +1,7 @@
+sounddevice
+numpy
+scipy
+google-genai
+python-dotenv
+keyboard
+edge-tts
