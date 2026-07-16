@@ -11,7 +11,49 @@ import brain
 import traceback
 import sys            
 import speaker_controller
+import pygame
 from delete_temp_files import delete_temp_files
+
+
+#CONFIGURACION DE VENTANA DE PYGAME
+
+#inicializar pygame 
+
+pygame.init()
+
+ANCHO = 800
+ALTO = 600
+pantalla = pygame.display.set_mode((ANCHO, ALTO))
+
+#titulo de la ventana 
+
+pygame.display.set_caption("Bit")
+
+#definir colores para la ventana 
+
+NEGRO = (0, 0, 0)
+BLANCO = (255, 255, 255)
+
+# Bucle principal
+ejecutando = True
+while ejecutando:
+    
+    # Manejo de eventos
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            ejecutando = False
+
+    # --- Renderizado ---
+    
+    # 1. Pintar el fondo de negro absoluto
+    pantalla.fill(NEGRO)
+    
+    # 2. Dibujar el borde blanco de 1 px
+    # pygame.draw.rect(superficie, color, (x, y, ancho, alto), grosor)
+    pygame.draw.rect(pantalla, BLANCO, (0, 0, ANCHO, ALTO), 1)
+
+    # Actualizar la pantalla
+    pygame.display.flip()
 
 def ejecutar_ciclo_asistencia():
     delete_temp_files()
@@ -24,6 +66,9 @@ def ejecutar_ciclo_asistencia():
     audio_controller.audio_buffer = []
     audio_controller.is_muted = False
     
+
+    
+
     # 2. Iniciar la escucha activa por el micrófono
     print("\n Escuchando... Habla ahora (Tienes 1 minuto de grabación, presiona x para pararla.)")
     stream = sd.InputStream(

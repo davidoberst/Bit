@@ -21,7 +21,7 @@ def take_screenshot(filename="snapshot.jpg"):
             # -s: Guarda directamente en la ruta especificada sin abrir la interfaz
             command = ["xfce4-screenshooter", "-f", "-s", filename]
         else:
-            # COMANDO PARA KDE (Por defecto):
+            # COMANDO PARA wayland:
             # -b: Lanza en segundo plano (background)
             # -n: No abre la interfaz grafica de Spectacle
             # -o: Guarda directamente en la ruta especificada
