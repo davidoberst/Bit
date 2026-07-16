@@ -74,6 +74,10 @@ def hablar_sincronizado(texto):
     speaker_controller.hablar(texto)
     esta_hablando = False
 
+def decir_frase_carga_async():
+    """Lanza la voz de carga en segundo plano para no ralentizar el análisis táctico."""
+    hablar_sincronizado("Claro, procesando datos multimedia, un momento Juan.")
+
 def procesar_y_responder():
     """Hilo secundario: Detiene grabación, toma captura, consulta a Gemini y habla."""
     global esta_grabando, esta_procesando, stream_audio
@@ -83,6 +87,10 @@ def procesar_y_responder():
     if stream_audio:
         stream_audio.stop()
         stream_audio.close()
+
+    # Lanzar aviso de carga por voz de forma asíncrona inmediatamente
+    hilo_voz_carga = threading.Thread(target=decir_frase_carga_async)
+    hilo_voz_carga.start()
     
     print("[*] Procesando muestras de voz locales...")
     audio_controller.save_audio_output()
@@ -99,6 +107,9 @@ def procesar_y_responder():
     # 3. Consultar Cerebro (Gemini)
     print("[*] Sincronizando datos con el núcleo de R.E.D...")
     respuesta_ia = brain.consultar_modelo_IA()
+    
+    # Esperar a que termine de decir la frase de carga antes de que hable la respuesta final
+    hilo_voz_carga.join()
     
     if respuesta_ia:
         print("\n" + "═"*50)
