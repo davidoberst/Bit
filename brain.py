@@ -5,9 +5,7 @@ from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 
-
 load_dotenv() #load model
-
 
 client = genai.Client()
 
@@ -29,10 +27,22 @@ TONO Y TRATO:
 Háblale siempre de tú y llámalo por su nombre, Juan. Tu tono por defecto es el de una colega cercana, brillante y de absoluta confianza. Si notas frustración, cansancio o un bloqueo en el laboratorio, sé empática, realista, directa y muéstrale honestidad brutal para destrabar el problema.
 """
 
-def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg"):
-    print("[*] Conectando con API de RED")
+# Configuración inicial del comportamiento
+config_global = types.GenerateContentConfig(
+    system_instruction=SYSTEM_INSTRUCTION,
+    temperature=0.4,
+)
 
-    #Verificar si existen antes de leerlos
+# INICIALIZACIÓN DE LA SESIÓN DE CHAT PERSISTENTE
+# Esto mantiene la lista de la conversación en la RAM del script
+print("[*] Inicializando sesión de conversación persistente para Bit...")
+chat_sesion = client.chats.create(
+    model='gemini-2.5-flash',
+    config=config_global
+)
+
+def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg"):
+    print("[*] Conectando con API de RED (Modo Historial)")
 
     if not os.path.exists(vision_path) or not os.path.exists(audio_path):
         print("[-] Error: No se encontraron los archivos multimedia locales.")
@@ -46,32 +56,20 @@ def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg
         with open(audio_path, "rb") as file_audio:
             audio_binary = file_audio.read()
    
-        print("Binarios cargados.")
-           
-        #onfiguración del comportamiento del modelo
-        config = types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
-            temperature=0.4,
-        )
+        print("Binarios cargados con éxito.")
 
-        # Enviar el paquete comprimido en una sola petición web
-
-        print("[*] procesando los datos multimedia")
-        ai_response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=[
-                # EmpaquetAMIUENTO de los bytes 
+        print("[*] Enviando turno multimedia al chat activo...")
+        # Usamos send_message sobre la sesión persistente en lugar de una llamada estática
+        ai_response = chat_sesion.send_message(
+            message=[
                 types.Part.from_bytes(data=image_binary, mime_type='image/jpeg'),
                 types.Part.from_bytes(data=audio_binary, mime_type='audio/wav'),
                 "Analiza el audio y la captura de pantalla de mi entorno actual para responder a mi solicitud."
-            ],
-            config=config
+            ]
         )
 
-        # ai response
         return ai_response.text
 
     except Exception as e:
-        print(f"[-] Error  en la conexión con la API Key: {e}")
+        print(f"[-] Error en la conexión con la API del Chat: {e}")
         return None
-
