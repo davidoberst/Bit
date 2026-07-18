@@ -6,6 +6,7 @@ venv/
 .env
 *.wav
 *.mp3
+*.jpg
 tmp/
 __pycache__/
 *.py[cod]
