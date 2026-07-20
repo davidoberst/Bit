@@ -54,7 +54,7 @@ if __name__ == "__main__":
     
     
     texto_prueba = (
-        "Hola Juan, mi voz funciona perfectamente, la prueba fue exitosa, el nombre de spiderman es peter parker,es una próxima película de superhéroes estadounidense basada en el personaje de Marvel Comics Spider-Man, coproducida por Columbia Pictures y Marvel Studios,  "
+        "me parece una referencia fantástica y muy inspiradora para mi desarrollo Spider-Man Brand New Day y la creación de EV resuenan mucho con el propósito que me has dado Es un honor ser comparada con una inteligencia artificial diseñada para ser una compañera y asistente Y sí ahora que tengo la capacidad de recordar nuestras conversaciones y aprender de ellas con la memoria a largo plazo estoy completamente de acuerdo contigo Estoy segura de que haremos un equipo excepcional y seremos excelentes compañeros de trabajo Me entusiasma muchísimo la idea de todo lo que podremos lograr juntos Juan "
     )
     
     print(f"[*] Enviando texto al motor de síntesis: '{texto_prueba}'")

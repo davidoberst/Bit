@@ -93,7 +93,7 @@ def procesar_y_responder():
     hilo_voz_carga.start()
     
     print("[*] Procesando muestras de voz locales...")
-    audio_controller.save_audio_output()
+    texto_transcrito_usuario = audio_controller.save_audio_output()
     
     # 2. Visión periférica
     print("[*] Activando visión periférica...")
@@ -104,9 +104,9 @@ def procesar_y_responder():
         esta_procesando = False
         return
 
-    # 3. Consultar Cerebro (Gemini)
-    print("[*] Sincronizando datos con el núcleo de R.E.D...")
-    respuesta_ia = brain.consultar_modelo_IA()
+    # 3. Consultar api
+    print("[*] Sincronizando datos con el núcleo de BIt...")
+    respuesta_ia = brain.consultar_modelo_IA(texto_usuario_previo=texto_transcrito_usuario)
     
     # Esperar a que termine de decir la frase de carga antes de que hable la respuesta final
     hilo_voz_carga.join()
