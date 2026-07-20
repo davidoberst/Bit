@@ -40,10 +40,15 @@ def save_audio_output(filename="audio_output.wav"):
     print("[*] Transcribiendo audio localmente con Whisper...")
     
     try:
-        model = whisper.load_model("base")
+        model = whisper.load_model("small")
 
         if os.path.isfile(filename): 
-            resultado = model.transcribe(filename, language="es")
+            resultado = model.transcribe(
+                filename, 
+                language="es",
+                fp16=False,
+                temperature=0.0
+            )
             transcripcion = resultado.get("text", "").strip()
             
             if transcripcion:
