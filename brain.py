@@ -4,10 +4,11 @@ import os
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-
+import json
 load_dotenv() #load model
 
 client = genai.Client()
+memory_path = "memory.json" #json de conversaciones (memoria)
 
 SYSTEM_INSTRUCTION = """
 Eres Bit, una IA copiloto (estilo Jarvis). Te identificas con los pronombres(she/her). Te ejecutas localmente en su Arch Linux; esa interfaz minimalista de ventana con fondo negro y un círculo blanco que vibra con tu voz, eres tú, Bit.
@@ -33,12 +34,43 @@ config_global = types.GenerateContentConfig(
     temperature=0.4,
 )
 
+
+#LEER BASE DE DATOS DE MEMORIA ANTES DE EMPEZAR EL MODELO 
+
+#1. verificar si el archiv memory.jsojn existe 
+
+historial_api = [] #lista para agregar texto parseado a la API
+
+
+if os.path.isfile(memory_path):
+    print("[*] Módulo de memoria encontrado (memory.json)")
+    try:
+        with open(memory_path, 'r', encoding='utf-8') as f:
+            memory_file_data = json.load(f) 
+        
+        # 2. Recorrer el contenido de JSON y transformar su estructura para que la API lo pueda leer
+        for x in memory_file_data: 
+            objeto_contenido = types.Content(
+                role=x["role"],
+                parts=[types.Part.from_text(text=x["text"])]
+            )
+            historial_api.append(objeto_contenido)
+            
+        print(f"[+] Memoria cargada con éxito: {len(historial_api)} mensajes pasados.")
+    except Exception as e:
+        print(f"[-] Error al leer memory.json: {e}")
+        historial_api = []
+else:
+    print("[*] No se encontró memory.json, iniciando conversación limpia.")
+
+
 # INICIALIZACIÓN DE LA SESIÓN DE CHAT PERSISTENTE
-# Esto mantiene la lista de la conversación en la RAM del script
-print("[*] Inicializando sesión de conversación persistente para Bit...")
+
+print("[*] Inicializando sesión de conversación persistente para Bit")
 chat_sesion = client.chats.create(
     model='gemini-2.5-flash',
-    config=config_global
+    config=config_global,
+    history=historial_api
 )
 
 def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg"):
