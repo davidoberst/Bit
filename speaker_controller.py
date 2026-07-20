@@ -34,23 +34,21 @@ def hablar(texto):
             stderr=subprocess.DEVNULL
         )
         
-        # 3. El Vigilante Táctico: Mantiene vivo a Python mientras mpv suena
+      
         while proceso_audio.poll() is None:
             time.sleep(0.05)
             
-        # 4. Limpieza segura: Una vez que mpv terminó, borramos el mp3
+      
         if os.path.exists(filename):
             os.remove(filename)
             
     except Exception as e:
         print(f"[-] Error en el controlador de voz (Edge-TTS): {e}")
-# =====================================================================
-# BANCO DE PRUEBAS LOCAL
-# =====================================================================
+
 if __name__ == "__main__":
     print("[*] Iniciando prueba independiente del controlador de voz...")
     
-    # Texto de prueba táctico para verificar velocidad y claridad
+    
     texto_prueba = (
         "Hola Juan, mi voz funciona perfectamente, la prueba fue exitosa"
     )

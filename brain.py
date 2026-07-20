@@ -1,10 +1,11 @@
 # En este modulo se define el cerebro de R.E.D., la conexion multimodal con Gemini
 
 import os
+import json
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-import json
+
 load_dotenv() #load model
 
 client = genai.Client()
@@ -25,7 +26,7 @@ REGLAS ABSOLUTAS DE FORMATO (CRUCIAL PARA EL LECTOR DE VOZ):
 2. Para separar ideas, listas o pasos en un plan sin usar viñetas ni asteriscos, estructura el discurso usando conectores narrativos fluidos (por ejemplo: En primer lugar... Como segunda opción... Finalmente...). Deja que la puntuación gramatical (puntos y comas) dicte las pausas naturales del TTS.
 
 TONO Y TRATO:
-Háblale siempre de tú y llámalo por su nombre, Juan. Tu tono por defecto es el de una colega cercana, brillante y de absoluta confianza. Si notas frustración, cansancio o un bloqueo en el laboratorio, sé empática, realista, directa y muéstrale honestidad brutal para destrabar el problema.
+Háblale siempre de tú y llómalo por su nombre, Juan. Tu tono por defecto es el de una colega cercana, brillante y de absoluta confianza. Si notas frustración, cansancio o un bloqueo en el laboratorio, sé empática, realista, directa y muéstrale honestidad brutal para destrabar el problema.
 """
 
 # Configuración inicial del comportamiento
@@ -35,12 +36,9 @@ config_global = types.GenerateContentConfig(
 )
 
 
-#LEER BASE DE DATOS DE MEMORIA ANTES DE EMPEZAR EL MODELO 
+# LEER BASE DE DATOS DE MEMORIA ANTES DE EMPEZAR EL MODELO 
 
-#1. verificar si el archiv memory.jsojn existe 
-
-historial_api = [] #lista para agregar texto parseado a la API
-
+historial_api = [] # Lista para agregar texto parseado a la API
 
 if os.path.isfile(memory_path):
     print("[*] Módulo de memoria encontrado (memory.json)")
@@ -48,7 +46,7 @@ if os.path.isfile(memory_path):
         with open(memory_path, 'r', encoding='utf-8') as f:
             memory_file_data = json.load(f) 
         
-        # 2. Recorrer el contenido de JSON y transformar su estructura para que la API lo pueda leer
+        # Recorrer el contenido del JSON y transformar su estructura para la API
         for x in memory_file_data: 
             objeto_contenido = types.Content(
                 role=x["role"],
@@ -91,7 +89,6 @@ def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg
         print("Binarios cargados con éxito.")
 
         print("[*] Enviando turno multimedia al chat activo...")
-        # Usamos send_message sobre la sesión persistente en lugar de una llamada estática
         ai_response = chat_sesion.send_message(
             message=[
                 types.Part.from_bytes(data=image_binary, mime_type='image/jpeg'),
@@ -100,7 +97,36 @@ def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg
             ]
         )
 
-        return ai_response.text
+        respuesta_texto = ai_response.text
+
+        # GUARDAR EN MEMORY.JSON TRAS RECIBIR LA RESPUESTA
+   
+        # 1. Obtener la transcripción del mensaje 
+        try:
+            texto_usuario = chat_sesion.get_history()[-2].parts[0].text
+        except Exception:
+            texto_usuario = "[consulta de voz de user]"
+
+        # 2 Leer los datos actuales del disco para no sobrescribir
+        datos_disco = []
+        if os.path.exists(memory_path):
+            try:
+                with open(memory_path, "r", encoding="utf-8") as f:
+                    datos_disco = json.load(f)
+            except Exception:
+                datos_disco = []
+
+        # 3. Anexar la nueva interacción en texto plano
+        datos_disco.append({"role": "user", "text": texto_usuario})
+        datos_disco.append({"role": "model", "text": respuesta_texto})
+
+        # 4. Escribir la lista actualizada en el archivo JSON
+        with open(memory_path, "w", encoding="utf-8") as f:
+            json.dump(datos_disco, f, ensure_ascii=False, indent=4)
+
+        print("[+] Interacción guardada en memory.json")
+
+        return respuesta_texto
 
     except Exception as e:
         print(f"[-] Error en la conexión con la API del Chat: {e}")
