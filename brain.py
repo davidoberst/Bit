@@ -5,6 +5,7 @@ import json
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
+import audio_controller
 
 load_dotenv() #load model
 
@@ -103,7 +104,7 @@ def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg
    
         # 1. Obtener la transcripción del mensaje 
         try:
-            texto_usuario = chat_sesion.get_history()[-2].parts[0].text
+            texto_usuario = audio_controller.save_audio_output(audio_path)
         except Exception:
             texto_usuario = "[consulta de voz de user]"
 

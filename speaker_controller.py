@@ -13,11 +13,15 @@ def hablar(texto):
         
     filename = "voice_response.mp3"
     
-    # Configuración de voz táctica:
-    # es-MX-DaliaNeural (Voz femenina de México, ultra fluida y rápida)
-    # es-CO-GonzaloNeural (Voz masculina de Colombia, excelente entonación)
-    VOICE = "es-VE-PaolaNeural" 
-    
+
+    # Configuración de voz 
+    #VOICE = "es-MX-JorgeNeural" MALE
+    #VOICE = "es-VE-PaolaNeural" FEMALE
+
+
+    VOICE = "es-VE-PaolaNeural"
+
+
     async def generar_audio():
         # Genera el paquete de audio directamente desde los servidores de Azure
         communicate = edge_tts.Communicate(texto, VOICE)
@@ -29,7 +33,7 @@ def hablar(texto):
         
         # 2. Lanzar mpv en un proceso asíncrono controlado (Tu código intacto)
         proceso_audio = subprocess.Popen(
-            ["mpv", "--no-video", "--speed=1.5", filename], # 1.4x suele ser perfecto para Edge-TTS ya que habla rápido
+            ["mpv", "--no-video", "--speed=1.3", filename], # 1.4x suele ser perfecto para Edge-TTS ya que habla rápido
             stdout=subprocess.DEVNULL, 
             stderr=subprocess.DEVNULL
         )
@@ -50,7 +54,7 @@ if __name__ == "__main__":
     
     
     texto_prueba = (
-        "Hola Juan, mi voz funciona perfectamente, la prueba fue exitosa"
+        "Hola Juan, mi voz funciona perfectamente, la prueba fue exitosa, el nombre de spiderman es peter parker,es una próxima película de superhéroes estadounidense basada en el personaje de Marvel Comics Spider-Man, coproducida por Columbia Pictures y Marvel Studios,  "
     )
     
     print(f"[*] Enviando texto al motor de síntesis: '{texto_prueba}'")
