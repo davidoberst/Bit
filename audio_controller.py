@@ -1,11 +1,11 @@
-#En este modulo se define el controlador de audio, como la IA escucha y procesa el audio 
+# En este modulo se define el controlador de audio, como la IA escucha y procesa el audio 
 
 import time
 import os
 import sounddevice as sd
 import numpy as np
 from scipy.io.wavfile import write
-import whisper #TRANSCRIBIR AUDIO A TEXTO ()
+import whisper # TRANSCRIBIR AUDIO A TEXTO ()
 
 # Variables de control para R.E.D.
 is_muted = False
@@ -19,44 +19,41 @@ def audio_callback(indata, frames, time, status):
         print(f"hardware status : {status}") 
         
     if is_muted: 
-        return  #si el microfono esta muteado, que ignore el bloque.
-    #else
+        return # si el microfono esta muteado, que ignore el bloque.
+    
     audio_buffer.append(indata.copy())
 
 def save_audio_output(filename="audio_output.wav"):
     if not audio_buffer:
-        print("no hay audio grabado para guardar.")
-        return
-    #else
+        print("No hay audio grabado para guardar.")
+        return "[Audio no grabado]"
 
-    #juntar audio completo :
+    # Juntar audio completo:
     full_audio = np.concatenate(audio_buffer, axis=0)
     
-    #escrbir datos en un wav 
+    # Escribir datos en un wav 
     write(filename, audio_frequency, full_audio)
-    print(f"[audio guardado con éxito en: {filename}")
-   
+    print(f"[*] Audio guardado con éxito en: {filename}")
 
-
-    #-------------------------------------------------------------
-    #transcribir wav a texto usando whisper, esto es para pasarle  el texto a la memoria (memory.json)
-
-
-    #para usar whisper aparte de instalar la libreria hay que instalar un complemento en el sistema [ffmpeg]
-
-    # sudo pacman -S ffmpeg
-
-
-    print("[*] Transcribiendo audio localmente con Whisper")
-    model = whisper.load_model("base")
-    audio_file_path = "audio_output.wav"
-
-    if os.path.isfile(filename) : 
-     resultado = model.transcribe(filename, language="es")
-     transcripcion = resultado.get("text", "").strip()
+    # -------------------------------------------------------------
+    # Transcribir wav a texto usando Whisper para la memoria (memory.json)
+    print("[*] Transcribiendo audio localmente con Whisper...")
     
-    if not transcripcion:
-            transcripcion = "[Audio sin voz detectable]"     
-            return transcripcion
-    return "[Error al leer archivo de audio]"
-    
+    try:
+        model = whisper.load_model("base")
+
+        if os.path.isfile(filename): 
+            resultado = model.transcribe(filename, language="es")
+            transcripcion = resultado.get("text", "").strip()
+            
+            if transcripcion:
+                print(f"[+] Transcripción exitosa: \"{transcripcion}\"")
+                return transcripcion
+            else:
+                return "[Audio sin voz detectable]"
+        else:
+            return "[Archivo de audio no encontrado]"
+
+    except Exception as e:
+        print(f"[-] Error al ejecutar Whisper: {e}")
+        return "[Error al leer archivo de audio]"
