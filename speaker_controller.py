@@ -25,8 +25,8 @@ def hablar(texto):
     VOICE = "es-US-AlonsoNeural"
 
     async def generar_audio():
-        # Genera el paquete de audio directamente desde los servidores de Azure
-        communicate = edge_tts.Communicate(texto, VOICE)
+       
+        communicate = edge_tts.Communicate(texto, VOICE, rate="+0%", volume="+20%", pitch="-15Hz") #15
         await communicate.save(filename)
 
     try:
@@ -55,17 +55,13 @@ if __name__ == "__main__":
     print("[*] Iniciando prueba independiente del controlador de voz...")
     
     
-    texto_prueba = """Bienvenido a casa, señor. Felicitaciones por las ceremonias de apertura. Fueron todo un éxito, al igual que su audiencia en el Senado. Y me permite decir lo refrescante que es verlo finalmente en un video con la ropa puesta, señor.
+    texto_prueba = """
 
-    Estamos en hasta 80 onzas al día para contrarrestar los síntomas, señor.
-
-Toxicidad en la sangre, 24%. Parece que el uso continuado del traje de Iron Man está acelerando su condición. Otro núcleo se ha agotado.
+Señor, la Toxicidad en la sangre, 24%. Parece que el uso continuado del traje de Iron Man está acelerando su condición. Otro núcleo se ha agotado.
 
 He ejecutado simulaciones en todos los elementos conocidos, y ninguno puede servir como un reemplazo viable para el núcleo de paladio.
 
-Se le está acabando tanto el tiempo como las opciones. Desafortunadamente, el dispositivo que lo mantiene con vida también lo está matando.
-
-La señorita Potts se aproxima. Le recomiendo que le informe…"""
+Se le está acabando tanto el tiempo como las opciones. Desafortunadamente, el dispositivo que lo mantiene con vida también lo está matando."""
 
 
     print(f"[*] Enviando texto al motor de síntesis: '{texto_prueba}'")

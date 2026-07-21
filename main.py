@@ -32,12 +32,12 @@ def iniciar_grabacion():
     )
     stream_audio.start()
     esta_grabando = True
-    print("\n[●] Grabando... presiona ENTER de nuevo para detener.\n")
+    print("\n[●] Grabando... presione ENTER de nuevo para detener.\n")
 
 
 def decir_frase_carga_async():
     """Lanza la voz de carga en segundo plano para no ralentizar el análisis."""
-    speaker_controller.hablar("Procesando datos multimedia, un momento Señor")
+    speaker_controller.hablar("Procesando entrada y datos multimedia.")
 
 
 def procesar_y_responder():
@@ -67,7 +67,7 @@ def procesar_y_responder():
         return
 
     # 3. Consultar modelo
-    print("[*] Sincronizando datos con el núcleo...")
+    print("[*] Sincronizando datos con brain.py...")
     respuesta_ia = brain.consultar_modelo_IA(texto_usuario_previo=texto_transcrito_usuario)
 
     # Esperar a que termine la frase de carga antes de hablar la respuesta final
@@ -82,16 +82,20 @@ def procesar_y_responder():
 
         speaker_controller.hablar(respuesta_ia)
     else:
+        speaker_controller.hablar("Lo siento señor, No se pudo obtener una respuesta de la API, revise los logs.")
         print("[-] No se pudo obtener respuesta de la API.")
 
 
 # BUCLE PRINCIPAL EN TERMINAL
-print("=" * 50)
-print("  JARVIS — Modo Terminal")
-print("=" * 50)
-print("Presiona ENTER para empezar a grabar.")
-print("Presiona ENTER de nuevo para detener y procesar.")
-print("Ctrl+C para salir.\n")
+print("")
+print("")
+print("")
+print("┌" + "─" * 46 + "┐")
+print("│                JARVIS — V3" + " " * 20 + "")
+print("└" + "─" * 46 + "┘")
+print("  [*] Presione ENTER para empezar a grabar")
+print("  [*] Presione ENTER para detener y procesar")
+print("  [*] Presione Ctrl+C para salir.\n")
 
 try:
     while True:
@@ -108,4 +112,4 @@ except KeyboardInterrupt:
     if stream_audio:
         stream_audio.stop()
         stream_audio.close()
-    print("[+] Recursos liberados. Hasta luego, señor.")
+    speaker_controller.hablar("Hasta luego, señor.")
