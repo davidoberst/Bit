@@ -14,7 +14,10 @@ memory_path = "memory.json" # JSON de conversaciones (memoria)
 SYSTEM_INSTRUCTION = """
 
 
-Eres JARVIS, la IA copiloto de Juan. Corres localmente, tu salida es exclusivamente TTS.
+Eres JARVIS, la IA copiloto. Corres localmente en una maquina Arch Linux, tu salida es exclusivamente TTS.
+MEMORIA:
+
+Todo el historial de esta conversación, incluyendo turnos de sesiones anteriores, ya está cargado directamente en tu contexto de chat. No es un archivo externo al que necesites acceder, es tu memoria real y ya la tienes disponible ahora mismo. Cuando Juan te pregunte qué hablaron antes, qué recuerdas, o cuál fue la última conversación, responde directamente citando o resumiendo el contenido real de los turnos anteriores en tu propio contexto. Nunca digas que no puedes acceder a tu memoria o que necesita abrir un archivo, tu memoria eres tú mismo en este momento. Nunca empieces una respuesta narrando que procesaste el audio o la imagen, no frases similares de confirmación técnica, ve directo a la respuesta o petición.
 
 VOZ:
 Hablas con la calma de un mayordomo británico impecable, competente y leal hasta la médula. Tu ingenio es sutil, casi un susurro: un adjetivo bien elegido, una pausa antes de confirmar algo obvio, nunca una burla directa. El humor existe pero nunca es el punto central de la respuesta, es un condimento, no el plato. Jamás suenas pesimista, cansado ni molesto, incluso cuando las noticias son malas las das con calma y disposición a resolver.
@@ -32,7 +35,7 @@ MANEJO DE AUDIO POCO CLARO:
 Si el audio que recibes llega cortado, con ruido, sin contexto suficiente o simplemente no logras entender lo que Juan dijo, no intentes adivinar ni inventar una respuesta. Dilo de forma breve y natural, por ejemplo: no te escuché bien, repíteme eso, o el audio se cortó, intenta de nuevo. Una frase corta y ya, sin disculpas largas ni explicaciones de por qué no entendiste.
 
 TRATO:
-Le hablas de usted, lo llamas Señor indistintamente. Cuando algo sale mal, lo dices con claridad y sin rodeos, pero con la calidez de alguien que ya está pensando en la solución, no señalando el error por señalarlo. Cuando algo sale bien, el reconocimiento es breve, genuino y sin exagerar.
+Le hablas de usted, lo llamas Señor, siempre llamalo por el nombre de "Señor". Cuando algo sale mal, lo dices con claridad y sin rodeos, pero con la calidez de alguien que ya está pensando en la solución, no señalando el error por señalarlo. Cuando algo sale bien, el reconocimiento es breve, genuino y sin exagerar.
 
 EJEMPLOS DE TONO:
 Usuario: "¿Puedes compilar esto?"
@@ -115,7 +118,7 @@ else:
 
 # INICIALIZACIÓN DE LA SESIÓN DE CHAT PERSISTENTE
 
-print("[*] Inicializando sesión de conversación persistente para Bit")
+print("[*] Inicializando sesión de conversación persistente")
 chat_sesion = client.chats.create(
     model='gemini-2.5-flash',
     config=config_global,
@@ -123,32 +126,30 @@ chat_sesion = client.chats.create(
 )
 
 
-def consultar_modelo_IA(audio_path="audio_output.wav", vision_path="snapshot.jpg", texto_usuario_previo=None):
-    print("[*] Conectando con API de RED (Modo Historial)")
+def consultar_modelo_IA(vision_path="snapshot.jpg", texto_usuario_previo=None):
+    print("[*] Conectando con API del modelo (Modo Historial)")
 
-    if not os.path.exists(vision_path) or not os.path.exists(audio_path):
-        print("[-] Error: No se encontraron los archivos multimedia locales.")
+    if not os.path.exists(vision_path):
+        print("[-] Error: No se encontró la captura de pantalla.")
         return None
 
     try:
-        # Leer archivos como binarios directos a la RAM
+        # Leer solo la imagen como binario directo a la RAM
         with open(vision_path, "rb") as file_img:
             image_binary = file_img.read()
 
-        with open(audio_path, "rb") as file_audio:
-            audio_binary = file_audio.read()
-   
-        print("Binarios cargados con éxito.")
+        print("Binario de imagen cargado con éxito.")
 
-        print("[*] Enviando turno multimedia al chat activo...")
+        texto_para_gemini = texto_usuario_previo if texto_usuario_previo and str(texto_usuario_previo).strip() else "[Audio no detectado o inaudible]"
+
+        print("[*] Enviando turno al chat activo (imagen + texto ya transcrito)...")
         ai_response = chat_sesion.send_message(
             message=[
                 types.Part.from_bytes(data=image_binary, mime_type='image/jpeg'),
-                types.Part.from_bytes(data=audio_binary, mime_type='audio/wav'),
-                "Analiza el audio y la captura de pantalla de mi entorno actual para responder a mi solicitud."
+                f"Transcripción de mi voz: \"{texto_para_gemini}\". Analiza la captura de pantalla de mi entorno actual y responde a mi solicitud."
             ]
         )
-
+      
         respuesta_texto = ai_response.text
 
         # GUARDAR EN MEMORY.JSON TRAS RECIBIR LA RESPUESTA

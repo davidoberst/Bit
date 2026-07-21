@@ -12,6 +12,11 @@ is_muted = False
 audio_frequency = 16000 #(Hz)
 audio_buffer = []   
 
+#cargar whisper, modelo de transcripcion al inicio. Para mas velocidad en el tiempo de respuesta, solo cargar una vez para no hacerlo en cada request
+print("[*] Cargando Whisper...")
+model = whisper.load_model("small")
+print("[*] Whisper cargado..")
+
 def audio_callback(indata, frames, time, status):
     global is_muted
     global audio_buffer 
@@ -37,11 +42,9 @@ def save_audio_output(filename="audio_output.wav"):
 
     # -------------------------------------------------------------
     # Transcribir wav a texto usando Whisper para la memoria (memory.json)
-    print("[*] Transcribiendo audio localmente con Whisper...")
-    
-    try:
-        model = whisper.load_model("small")
 
+    print("[*] Transcribiendo audio localmente con Whisper...")
+    try:       
         if os.path.isfile(filename): 
             resultado = model.transcribe(
                 filename, 

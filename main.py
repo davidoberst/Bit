@@ -1,5 +1,5 @@
 # =====================================================================
-# R.E.D. - ARCHIVO MAESTRO DE CONTROL (main.py)
+# (main.py)
 # =====================================================================
 
 import time
@@ -75,8 +75,10 @@ def hablar_sincronizado(texto):
     esta_hablando = False
 
 def decir_frase_carga_async():
+
     """Lanza la voz de carga en segundo plano para no ralentizar el análisis táctico."""
-    hablar_sincronizado("Claro, procesando datos multimedia, un momento Juan.")
+
+    hablar_sincronizado("Procesando datos multimedia, un momento Señor")
 
 def procesar_y_responder():
     """Hilo secundario: Detiene grabación, toma captura, consulta a Gemini y habla."""
@@ -91,13 +93,15 @@ def procesar_y_responder():
     # Lanzar aviso de carga por voz de forma asíncrona inmediatamente
     hilo_voz_carga = threading.Thread(target=decir_frase_carga_async)
     hilo_voz_carga.start()
-    
-    print("[*] Procesando muestras de voz locales...")
-    texto_transcrito_usuario = audio_controller.save_audio_output()
-    
-    # 2. Visión periférica
-    print("[*] Activando visión periférica...")
-    captura_exitosa = vision_controller.take_screenshot()
+
+
+    print("[*] Procesando voz y visión en paralelo...")
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futuro_transcripcion = executor.submit(audio_controller.save_audio_output)
+        futuro_captura = executor.submit(vision_controller.take_screenshot)
+        texto_transcrito_usuario = futuro_transcripcion.result()
+        captura_exitosa = futuro_captura.result()
     
     if not captura_exitosa:
         print("[-] Cancelando secuencia: El módulo de visión falló.")
@@ -113,7 +117,7 @@ def procesar_y_responder():
     
     if respuesta_ia:
         print("\n" + "═"*50)
-        print("R.E.D. RESPONSE:")
+        print("Response : :")
         print("═"*50)
         print(respuesta_ia)
         print("═"*50 + "\n")
@@ -127,7 +131,7 @@ def procesar_y_responder():
 
 
 # BUCLE PRINCIPAL DE PYGAME (Game Loop)
-print("[*] Inicializando RED en entorno gráfico...")
+print("[*] Inicializando entorno gráfico...")
 
 clock = pygame.time.Clock()
 ejecutando = True
@@ -163,7 +167,7 @@ while ejecutando:
     radio_base = 150
 
     if esta_grabando:
-        # 🎙️ EL USUARIO HABLA: El círculo desaparece y se dibuja la onda de sonido horizontal
+        #  EL USUARIO HABLA: El círculo desaparece y se dibuja la onda de sonido horizontal
         puntos_onda = []
         paso_x = ANCHO / len(muestras_mic)
         for i, amp in enumerate(muestras_mic):
