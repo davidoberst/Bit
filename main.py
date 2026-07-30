@@ -33,12 +33,14 @@ def iniciar_grabacion():
     )
     stream_audio.start()
     esta_grabando = True
-    print("\n[●] Grabando... presione ENTER de nuevo para detener.\n")
+    print("┌" + "─" * 46 + "┐")
+    print("│ [●] Grabando...Presiona Enter para deneter" + " " * 20 + "")
+    print("└" + "─" * 46 + "┘")
 
 
 def decir_frase_carga_async():
     """Lanza la voz de carga en segundo plano para no ralentizar el análisis."""
-    speaker_controller.hablar("Procesando entrada y datos multimedia.")
+    speaker_controller.hablar("Analizando datos de Escritorio.")
 
 
 def procesar_y_responder():
@@ -46,7 +48,7 @@ def procesar_y_responder():
     global stream_audio
     print("[*] Procesando...")
 
-    # 1. Detener micrófono de forma segura
+    # 1. Detener micrófono 
     if stream_audio:
         stream_audio.stop()
         stream_audio.close()
@@ -83,7 +85,7 @@ def procesar_y_responder():
 
         speaker_controller.hablar(respuesta_ia)
     else:
-        speaker_controller.hablar("Lo siento señor, No se pudo obtener una respuesta de la API, revise los logs.")
+        speaker_controller.hablar("Lo siento juan, No se pudo obtener una respuesta de la API, revisa los logs.")
         print("[-] No se pudo obtener respuesta de la API.")
 
 
@@ -95,26 +97,46 @@ print("│                BIT — V3" + " " * 20 + "")
 print("└" + "─" * 46 + "┘")
 print("  [*] Presione ENTER para empezar a grabar")
 print("  [*] Presione ENTER para detener y procesar")
+print("  [*] Presione M para ver modos de Asistencia")
 print("  [*] Presione Ctrl+C para salir.\n")
-speaker_controller.hablar("Bienvenido, Juan.")
+speaker_controller.hablar("Hola, Juan.")
 
-try:
+
+
+
+try: 
     while True:
-        input()  # Espera ENTER
-
-        if not esta_grabando:
+        choice = input("> ")
+        if(choice.lower() == "m"):
+         print("┌" + "─" * 46 + "┐")
+         print("│       MODOS DE ASISTENCIA" + " " * 20 + "")
+         print("└" + "─" * 46 + "┘")
+         # Imprimir los modos de Bit
+         print(f"""1. Bit Vision : Combina visión por computadora y reconocimiento de voz en tiempo real. Al analizar lo que ves en tu escritorio, Bit comprende lo que estás haciendo para resolver dudas sobre el contenido en pantalla, y darte asistencia contextual inmediata sin que tengas que explicarle cada detalle.""")
+         print("")
+         print("2. Bit Command : Diseñado para una interacción rápida y liviana. Bit se enfoca exclusivamente en responder preguntas, charla o procesar tus instrucciones de voz para ejecutar comandos del sistema, abrir aplicaciones, gestionar tareas y controlar tu computadora sin procesar tu pantalla.")
+         print("")
+         print("Para seleccionar un modelo, simplemente   escriba el nombre del modelo en minusculas en la consola : bit vision , bit command ")
+         print("")
+         
+        
+        if (choice == ""): 
+         if not esta_grabando:
             iniciar_grabacion()
-        else:
+         else:
             esta_grabando = False
             procesar_y_responder()
 
 except KeyboardInterrupt:
-    print("\n[*] Cerrando JARVIS...")
+    print("\n[*] Cerrando Bit...")
     if stream_audio:
         stream_audio.stop()
         stream_audio.close()
-    speaker_controller.hablar("Hasta luego, señor.")
+    speaker_controller.hablar("Hasta luego, Juan.")
     subprocess.run(["xdotool", "getactivewindow", "windowkill"])
     #cerrar ventana luego de despedida : 
     #sudo pacman -S xdotool
+ 
+
+
 
