@@ -1,12 +1,9 @@
-# =====================================================================
-# (main.py) — Versión terminal, sin interfaz gráfica
-# =====================================================================
-
 import sounddevice as sd
 import numpy as np
 import audio_controller
 import vision_controller
 import brain
+import brain_bit_command_model
 import speaker_controller
 import threading
 import concurrent.futures
@@ -16,6 +13,7 @@ import subprocess
 # LÓGICA DE CONTROL Y ESTADOS
 esta_grabando = False
 stream_audio = None
+modo_actual = "vision"  # "vision" o "command"
 
 
 def iniciar_grabacion():
@@ -40,11 +38,14 @@ def iniciar_grabacion():
 
 def decir_frase_carga_async():
     """Lanza la voz de carga en segundo plano para no ralentizar el análisis."""
-    speaker_controller.hablar("Analizando datos de Escritorio.")
+    if modo_actual == "vision":
+        speaker_controller.hablar("Analizando datos de Escritorio.")
+    else:
+        speaker_controller.hablar("Procesando.")
 
 
 def procesar_y_responder():
-    """Detiene grabación, toma captura, consulta al modelo y habla."""
+    """Detiene grabación, consulta al modelo según el modo activo, y habla."""
     global stream_audio
     print("[*] Procesando...")
 
@@ -57,21 +58,29 @@ def procesar_y_responder():
     hilo_voz_carga = threading.Thread(target=decir_frase_carga_async)
     hilo_voz_carga.start()
 
-    # 2. Transcripción y captura en paralelo
-    print("[*] Procesando voz y visión en paralelo...")
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futuro_transcripcion = executor.submit(audio_controller.save_audio_output)
-        futuro_captura = executor.submit(vision_controller.take_screenshot)
-        texto_transcrito_usuario = futuro_transcripcion.result()
-        captura_exitosa = futuro_captura.result()
+    if modo_actual == "vision":
+        # 2. Transcripción y captura en paralelo
+        print("[*] Procesando voz y visión en paralelo...")
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futuro_transcripcion = executor.submit(audio_controller.save_audio_output)
+            futuro_captura = executor.submit(vision_controller.take_screenshot)
+            texto_transcrito_usuario = futuro_transcripcion.result()
+            captura_exitosa = futuro_captura.result()
 
-    if not captura_exitosa:
-        print("[-] Cancelando secuencia: El módulo de visión falló.")
-        return
+        if not captura_exitosa:
+            print("[-] Cancelando secuencia: El módulo de visión falló.")
+            return
 
-    # 3. Consultar modelo
-    print("[*] Sincronizando datos con brain.py...")
-    respuesta_ia = brain.consultar_modelo_IA(texto_usuario_previo=texto_transcrito_usuario)
+        print("[*] Sincronizando datos con brain.py...")
+        respuesta_ia = brain.consultar_modelo_IA(texto_usuario_previo=texto_transcrito_usuario)
+
+    else:  # modo_actual == "command"
+        # 2. Solo transcripción, sin captura de pantalla
+        print("[*] Procesando voz...")
+        texto_transcrito_usuario = audio_controller.save_audio_output()
+
+        print("[*] Sincronizando datos con brain_bit_command_model.py...")
+        respuesta_ia = brain_bit_command_model.consultar_modelo_IA(texto_usuario_previo=texto_transcrito_usuario)
 
     # Esperar a que termine la frase de carga antes de hablar la respuesta final
     hilo_voz_carga.join()
@@ -102,30 +111,40 @@ print("  [*] Presione Ctrl+C para salir.\n")
 speaker_controller.hablar("Hola, Juan.")
 
 
-
-
 try: 
     while True:
         choice = input("> ")
-        if(choice.lower() == "m"):
-         print("┌" + "─" * 46 + "┐")
-         print("│       MODOS DE ASISTENCIA" + " " * 20 + "")
-         print("└" + "─" * 46 + "┘")
-         # Imprimir los modos de Bit
-         print(f"""1. Bit Vision : Combina visión por computadora y reconocimiento de voz en tiempo real. Al analizar lo que ves en tu escritorio, Bit comprende lo que estás haciendo para resolver dudas sobre el contenido en pantalla, y darte asistencia contextual inmediata sin que tengas que explicarle cada detalle.""")
-         print("")
-         print("2. Bit Command : Diseñado para una interacción rápida y liviana. Bit se enfoca exclusivamente en responder preguntas, charla o procesar tus instrucciones de voz para ejecutar comandos del sistema, abrir aplicaciones, gestionar tareas y controlar tu computadora sin procesar tu pantalla.")
-         print("")
-         print("Para seleccionar un modelo, simplemente   escriba el nombre del modelo en minusculas en la consola : bit vision , bit command ")
-         print("")
-         
-        
-        if (choice == ""): 
-         if not esta_grabando:
-            iniciar_grabacion()
-         else:
-            esta_grabando = False
-            procesar_y_responder()
+
+        if choice.lower() == "m":
+            print("┌" + "─" * 46 + "┐")
+            print("│       MODOS DE ASISTENCIA" + " " * 20 + "")
+            print("└" + "─" * 46 + "┘")
+            print(f"""1. Bit Vision : Combina visión por computadora y reconocimiento de voz en tiempo real. Al analizar lo que ves en tu escritorio, Bit comprende lo que estás haciendo para resolver dudas sobre el contenido en pantalla, y darte asistencia contextual inmediata sin que tengas que explicarle cada detalle.""")
+            print("")
+            print("2. Bit Command : Diseñado para una interacción rápida y liviana. Bit se enfoca exclusivamente en responder preguntas, charla o procesar tus instrucciones de voz para ejecutar comandos del sistema, abrir aplicaciones, gestionar tareas y controlar tu computadora sin procesar tu pantalla.")
+            print("")
+            print(f"Modo activo actualmente: {modo_actual}")
+            print("")
+            print("Para seleccionar un modelo, simplemente escriba el nombre del modelo en minusculas en la consola : 'vision' o 'command' ")
+            print("")
+            continue
+
+        if choice.lower() == "vision":
+            modo_actual = "vision"
+            print("[*] Modo cambiado a Bit Vision.")
+            continue
+
+        if choice.lower() == "command":
+            modo_actual = "command"
+            print("[*] Modo cambiado a Bit Command.")
+            continue
+
+        if choice == "": 
+            if not esta_grabando:
+                iniciar_grabacion()
+            else:
+                esta_grabando = False
+                procesar_y_responder()
 
 except KeyboardInterrupt:
     print("\n[*] Cerrando Bit...")
@@ -134,9 +153,3 @@ except KeyboardInterrupt:
         stream_audio.close()
     speaker_controller.hablar("Hasta luego, Juan.")
     subprocess.run(["xdotool", "getactivewindow", "windowkill"])
-    #cerrar ventana luego de despedida : 
-    #sudo pacman -S xdotool
- 
-
-
-
