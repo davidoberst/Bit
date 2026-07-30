@@ -22,11 +22,11 @@ def hablar(texto):
     #VOICE = "es-VE-PaolaNeural" FEMALE
     #es-MX-DaliaNeural
 
-    VOICE = "es-US-AlonsoNeural"
+    VOICE = "es-VE-PaolaNeural"
 
     async def generar_audio():
        
-        communicate = edge_tts.Communicate(texto, VOICE, rate="+0%", volume="+20%", pitch="-15Hz") #15
+        communicate = edge_tts.Communicate(texto, VOICE, rate="+0%", volume="+20%", pitch="-10Hz") #15
         await communicate.save(filename)
 
     try:

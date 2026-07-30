@@ -11,6 +11,7 @@ import speaker_controller
 import threading
 import concurrent.futures
 from delete_temp_files import delete_temp_files
+import subprocess
 
 # LÓGICA DE CONTROL Y ESTADOS
 esta_grabando = False
@@ -88,14 +89,14 @@ def procesar_y_responder():
 
 # BUCLE PRINCIPAL EN TERMINAL
 print("")
-print("")
-print("")
+
 print("┌" + "─" * 46 + "┐")
-print("│                JARVIS — V3" + " " * 20 + "")
+print("│                BIT — V3" + " " * 20 + "")
 print("└" + "─" * 46 + "┘")
 print("  [*] Presione ENTER para empezar a grabar")
 print("  [*] Presione ENTER para detener y procesar")
 print("  [*] Presione Ctrl+C para salir.\n")
+speaker_controller.hablar("Bienvenido, Juan.")
 
 try:
     while True:
@@ -113,3 +114,7 @@ except KeyboardInterrupt:
         stream_audio.stop()
         stream_audio.close()
     speaker_controller.hablar("Hasta luego, señor.")
+    subprocess.run(["xdotool", "getactivewindow", "windowkill"])
+    #cerrar ventana luego de despedida : 
+    #sudo pacman -S xdotool
+
