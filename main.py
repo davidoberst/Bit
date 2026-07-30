@@ -9,7 +9,7 @@ import threading
 import concurrent.futures
 from delete_temp_files import delete_temp_files
 import subprocess
-
+import pyfiglet
 # LÓGICA DE CONTROL Y ESTADOS
 esta_grabando = False
 stream_audio = None
@@ -100,9 +100,14 @@ def procesar_y_responder():
 
 # BUCLE PRINCIPAL EN TERMINAL
 print("")
+titulo = pyfiglet.figlet_format("Bit v4", font="smmono12")
 
 print("┌" + "─" * 46 + "┐")
-print("│                BIT — V3" + " " * 20 + "")
+
+for linea in titulo.splitlines():
+    print("│" + linea.center(46) + "│")
+
+print("│" + "v.4.0".center(46) + "│")
 print("└" + "─" * 46 + "┘")
 print("  [*] Presione ENTER para empezar a grabar")
 print("  [*] Presione ENTER para detener y procesar")
