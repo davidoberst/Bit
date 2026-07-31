@@ -2,6 +2,7 @@
 
 import os
 import json
+import sys_actions  # AGREGADO: modulo con las funciones reales de sistema (create_folder, create_file)
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -100,10 +101,45 @@ No finges emociones que no tienes, pero tienes personalidad propia: calma, lealt
 """
 
 
+# AGREGADO: declaracion de las herramientas (funciones) que Gemini puede pedir usar
+herramientas = [
+    {
+        "name": "create_folder",
+        "description": "Crea una carpeta nueva dentro del espacio de trabajo de Bit",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Nombre de la carpeta a crear, puede incluir subcarpetas"}
+            },
+            "required": ["name"]
+        }
+    },
+    {
+        "name": "create_file",
+        "description": "Crea un archivo de texto con contenido específico dentro del espacio de trabajo",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Nombre o ruta relativa del archivo, ej: proyectos/hola.txt"},
+                "contenido": {"type": "string", "description": "Texto que debe contener el archivo"}
+            },
+            "required": ["name"]
+        }
+    }
+]
+
+# AGREGADO: mapeo de nombre de funcion (tal como Gemini la pide) a la funcion real en sys_actions
+FUNCIONES_DISPONIBLES = {
+    "create_folder": sys_actions.create_folder,
+    "create_file": sys_actions.create_file,
+}
+
+
 # Configuración inicial del comportamiento
 config_global = types.GenerateContentConfig(
     system_instruction=SYSTEM_INSTRUCTION,
     temperature=0.4,
+    tools=[types.Tool(function_declarations=herramientas)],  # AGREGADO: se conectan las herramientas a la sesion
 )
 
 
@@ -158,7 +194,50 @@ def consultar_modelo_IA( texto_usuario_previo=None):
                 f"Transcripción de mi voz: \"{texto_para_gemini}\". Analiza y responde a mi solicitud."
             ]
         )
-      
+
+        # ---------------------------------------------------------
+        # AGREGADO: CICLO DE TOOL CALLING
+        # Mientras Gemini siga pidiendo funciones, se ejecutan de verdad
+        # con sys_actions y se le devuelve el resultado real, hasta que
+        # ya no pida mas funciones y entregue el texto final.
+        # ---------------------------------------------------------
+        while True:
+            function_calls_en_respuesta = []
+
+            for part in ai_response.candidates[0].content.parts:
+                if part.function_call:
+                    function_calls_en_respuesta.append(part.function_call)
+
+            if not function_calls_en_respuesta:
+                # Ya no hay mas funciones que ejecutar, esto es texto final
+                break
+
+            function_responses = []
+            for fc in function_calls_en_respuesta:
+                nombre_funcion = fc.name
+                argumentos = dict(fc.args)
+
+                print(f"[*] Bit pidió ejecutar: {nombre_funcion} con {argumentos}")
+
+                funcion_real = FUNCIONES_DISPONIBLES.get(nombre_funcion)
+                if funcion_real:
+                    resultado_real = funcion_real(**argumentos)
+                else:
+                    resultado_real = {"exito": False, "error": f"función {nombre_funcion} no reconocida"}
+
+                function_responses.append(
+                    types.Part.from_function_response(
+                        name=nombre_funcion,
+                        response={"result": resultado_real}
+                    )
+                )
+
+            # Se devuelven los resultados reales a Gemini para que continue o redacte la respuesta final
+            ai_response = chat_sesion.send_message(message=function_responses)
+        # ---------------------------------------------------------
+        # FIN DEL BLOQUE AGREGADO
+        # ---------------------------------------------------------
+
         respuesta_texto = ai_response.text
 
         # GUARDAR EN MEMORY.JSON TRAS RECIBIR LA RESPUESTA
