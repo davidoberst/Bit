@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 
 PATH = os.path.expanduser("~/bit_workspace")
@@ -33,7 +34,7 @@ def create_file(name: str, contenido: str = "") -> dict:
         return {"exito": False, "error": str(e)}
 
 
-def delete_files(): 
+def delete_file(): 
     joined_path = os.path.join(PATH, name)
     ruta_resuelta = os.path.abspath(joined_path)  
     if not ruta_resuelta.startswith(os.path.abspath(PATH) + os.sep):
@@ -45,6 +46,22 @@ def delete_files():
          return {"exito": True, "ruta": os.path.abspath(ruta_resuelta)}
         else: 
          print("[X] El archivo no existe.")
+    except : 
+        return {"exito": False, "error": str(e)}
+
+
+def delete_folder(): 
+    joined_path = os.path.join(PATH, name)
+    ruta_resuelta = os.path.abspath(joined_path)  
+    if not ruta_resuelta.startswith(os.path.abspath(PATH) + os.sep):
+        return {"exito": False, "error": "ruta fuera del espacio de trabajo permitido"}
+    try :
+         if os.path.exists(ruta_resuelta):
+          shutil.rmtree(ruta_resuelta)
+          print("[!] Carpeta eliminada")
+          return {"exito": True, "ruta": os.path.abspath(ruta_resuelta)}
+         else: 
+          print("[X] La carpeta no existe.")
     except : 
         return {"exito": False, "error": str(e)}
 
