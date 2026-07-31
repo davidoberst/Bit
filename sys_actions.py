@@ -34,7 +34,7 @@ def create_file(name: str, contenido: str = "") -> dict:
         return {"exito": False, "error": str(e)}
 
 
-def delete_file(): 
+def delete_file(name: str) -> dict: 
     joined_path = os.path.join(PATH, name)
     ruta_resuelta = os.path.abspath(joined_path)  
     if not ruta_resuelta.startswith(os.path.abspath(PATH) + os.sep):
@@ -50,7 +50,7 @@ def delete_file():
         return {"exito": False, "error": str(e)}
 
 
-def delete_folder(): 
+def delete_folder(name: str)-> dict:
     joined_path = os.path.join(PATH, name)
     ruta_resuelta = os.path.abspath(joined_path)  
     if not ruta_resuelta.startswith(os.path.abspath(PATH) + os.sep):
