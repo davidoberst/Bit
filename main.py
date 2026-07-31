@@ -13,7 +13,7 @@ import pyfiglet
 # LÓGICA DE CONTROL Y ESTADOS
 esta_grabando = False
 stream_audio = None
-modo_actual = "vision"  # "vision" o "command"
+modo_actual = "command"  # "vision" o "command"
 
 
 def iniciar_grabacion():
@@ -100,11 +100,11 @@ def procesar_y_responder():
 
 # BUCLE PRINCIPAL EN TERMINAL
 print("")
-titulo = pyfiglet.figlet_format("Bit v4", font="smmono12")
+title = pyfiglet.figlet_format("Bit v4", font="smmono12")
 
 print("┌" + "─" * 46 + "┐")
 
-for linea in titulo.splitlines():
+for linea in title.splitlines():
     print("│" + linea.center(46) + "│")
 
 print("│" + "v.4.0".center(46) + "│")
@@ -122,7 +122,7 @@ try:
 
         if choice.lower() == "m":
             print("┌" + "─" * 46 + "┐")
-            print("│       MODOS DE ASISTENCIA" + " " * 20 + "")
+            print("│         MODOS DE ASISTENCIA" + " " * 20 + "")
             print("└" + "─" * 46 + "┘")
             print(f"""1. Bit Vision : Combina visión por computadora y reconocimiento de voz en tiempo real. Al analizar lo que ves en tu escritorio, Bit comprende lo que estás haciendo para resolver dudas sobre el contenido en pantalla, y darte asistencia contextual inmediata sin que tengas que explicarle cada detalle.""")
             print("")
