@@ -125,6 +125,20 @@ herramientas = [
             },
             "required": ["name"]
         }
+    },
+    {
+         "name": "delete_folder",
+        "description": "Elimina una carpeta",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Nombre de la carpeta a eliminar, puede incluir subcarpetas"}
+            },
+            "required": ["name"]
+        }
+
+
+
     }
 ]
 
@@ -132,6 +146,7 @@ herramientas = [
 FUNCIONES_DISPONIBLES = {
     "create_folder": sys_actions.create_folder,
     "create_file": sys_actions.create_file,
+    "delete_folder": sys_actions.delete_folder
 }
 
 
