@@ -209,6 +209,7 @@ def consultar_modelo_IA( texto_usuario_previo=None):
                 f"Transcripción de mi voz: \"{texto_para_gemini}\". Analiza y responde a mi solicitud."
             ]
         )
+        return ai_response.text
 
         # ---------------------------------------------------------
         # AGREGADO: CICLO DE TOOL CALLING
