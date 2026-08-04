@@ -5,3 +5,5 @@ google-genai
 python-dotenv
 keyboard
 edge-tts
+faster_whisper
+pyfiglet
