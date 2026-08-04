@@ -2,17 +2,17 @@ import os
 import subprocess
 import time
 import asyncio
-import brain_bit_command_model
+
 
 def hablar(texto):
     if not texto:
         return
    
     filename = "voice_response.wav"
-    
+    piper_model = "es_MX-cortana-19669-epoch-high.onnx"
 
     async def generar_audio():
-     comando = f'''echo "{texto}" | /opt/piper-tts/piper --model /home/davidoberst/piper_voices/es_MX-cortana-19669-epoch-high.onnx --length_scale 1.1 --output_file voice_response.wav && paplay voice_response.wav'''
+     comando = f'''echo "{texto}" | /opt/piper-tts/piper --model /home/davidoberst/piper_voices/{piper_model} --length_scale 1.1 --output_file voice_response.wav && paplay voice_response.wav'''
      subprocess.run(comando, shell=True, check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     try:
      asyncio.run(generar_audio())
