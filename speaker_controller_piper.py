@@ -12,12 +12,15 @@ def hablar(texto):
     
 
     async def generar_audio():
-     comando = f'''echo "{texto_prueba}" | /opt/piper-tts/piper --model /home/davidoberst/piper_voices/es_MX-cortana-19669-epoch-high.onnx --length_scale 1.2 --output_file voice_response.wav && paplay voice_response.wav'''
-    try:
+     comando = f'''echo "{texto_prueba}" | /opt/piper-tts/piper --model /home/davidoberst/piper_voices/es_MX-cortana-19669-epoch-high.onnx --length_scale 1.1 --output_file voice_response.wav && paplay voice_response.wav'''
      subprocess.run(comando, shell=True, check=True)
-     
+    try:
+     asyncio.run(generar_audio())
+     if os.path.exists(filename):
+       os.remove(filename)
+            
     except Exception as e:
-        print(f"[-] Error en el controlador de voz o comando de subprocess {e}")
+        print(f"[-] Error en el controlador de voz {e}")
 
 if __name__ == "__main__":
     print("[*] Iniciando prueba independiente del controlador de voz...")
