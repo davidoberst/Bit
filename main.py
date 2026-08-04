@@ -15,6 +15,20 @@ esta_grabando = False
 stream_audio = None
 modo_actual = "command"  # "vision" o "command"
 
+def banner():
+    title = pyfiglet.figlet_format("Bit v2", font="smmono12")
+
+    print("┌" + "─" * 46 + "┐")
+
+    for linea in title.splitlines():
+        print("│" + linea.center(46) + "│")
+
+    print("│" + "v.2.0".center(46) + "│")
+    print("└" + "─" * 46 + "┘")
+    print("  [*] Presione ENTER para empezar a grabar")
+    print("  [*] Presione ENTER para detener y procesar")
+    print("  [*] Presione M para ver modos de Asistencia")
+    print("  [*] Presione Ctrl+C para salir.\n")
 
 def iniciar_grabacion():
     """Inicia la escucha activa del micrófono en segundo plano."""
@@ -87,32 +101,22 @@ def procesar_y_responder():
 
     if respuesta_ia:
         print("\n" + "═" * 50)
-        print("RESPONSE:")
+        print("Bit Response:")
         print("═" * 50)
         print(respuesta_ia)
         print("═" * 50 + "\n")
 
         speaker_controller.hablar(respuesta_ia)
+        banner()
+
+        
     else:
         speaker_controller.hablar("Lo siento juan, No se pudo obtener una respuesta de la API, revisa los logs.")
         print("[-] No se pudo obtener respuesta de la API.")
 
 
 # BUCLE PRINCIPAL EN TERMINAL
-print("")
-title = pyfiglet.figlet_format("Bit v2", font="smmono12")
-
-print("┌" + "─" * 46 + "┐")
-
-for linea in title.splitlines():
-    print("│" + linea.center(46) + "│")
-
-print("│" + "v.2.0".center(46) + "│")
-print("└" + "─" * 46 + "┘")
-print("  [*] Presione ENTER para empezar a grabar")
-print("  [*] Presione ENTER para detener y procesar")
-print("  [*] Presione M para ver modos de Asistencia")
-print("  [*] Presione Ctrl+C para salir.\n")
+banner()
 speaker_controller.hablar("Hola, Juan.")
 
 
