@@ -100,14 +100,14 @@ def procesar_y_responder():
 
 # BUCLE PRINCIPAL EN TERMINAL
 print("")
-title = pyfiglet.figlet_format("Bit v4", font="smmono12")
+title = pyfiglet.figlet_format("Bit v2", font="smmono12")
 
 print("┌" + "─" * 46 + "┐")
 
 for linea in title.splitlines():
     print("│" + linea.center(46) + "│")
 
-print("│" + "v.4.0".center(46) + "│")
+print("│" + "v.2.0".center(46) + "│")
 print("└" + "─" * 46 + "┘")
 print("  [*] Presione ENTER para empezar a grabar")
 print("  [*] Presione ENTER para detener y procesar")
