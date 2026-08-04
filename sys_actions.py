@@ -66,6 +66,9 @@ def delete_folder(name: str)-> dict:
         return {"exito": False, "error": str(e)}
 
 
+def search_web(name:str)-> dict:
+    pass
+
     
 
 
