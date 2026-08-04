@@ -209,7 +209,7 @@ def consultar_modelo_IA( texto_usuario_previo=None):
                 f"Transcripción de mi voz: \"{texto_para_gemini}\". Analiza y responde a mi solicitud."
             ]
         )
-        return ai_response.text
+        
 
         # ---------------------------------------------------------
         # AGREGADO: CICLO DE TOOL CALLING
@@ -248,11 +248,8 @@ def consultar_modelo_IA( texto_usuario_previo=None):
                     )
                 )
 
-            # Se devuelven los resultados reales a Gemini para que continue o redacte la respuesta final
             ai_response = chat_sesion.send_message(message=function_responses)
-        # ---------------------------------------------------------
-        # FIN DEL BLOQUE AGREGADO
-        # ---------------------------------------------------------
+     
 
         respuesta_texto = ai_response.text
 

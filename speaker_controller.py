@@ -9,10 +9,10 @@ def hablar(texto):
         return
    
     filename = "voice_response.wav"
-    piper_model = "es_MX-cortana-19669-epoch-high.onnx"
+    piper_model = "es_MX-claude-high.onnx"
 
     async def generar_audio():
-     comando = f'''echo "{texto}" | /opt/piper-tts/piper --model /home/davidoberst/piper_voices/{piper_model} --length_scale 1.1 --output_file voice_response.wav && paplay voice_response.wav'''
+     comando = f'''echo "{texto}" | /opt/piper-tts/piper --model /home/davidoberst/piper_voices/{piper_model} --length_scale 0.8 --output_file voice_response.wav && paplay voice_response.wav'''
      subprocess.run(comando, shell=True, check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     try:
      asyncio.run(generar_audio())
@@ -27,12 +27,16 @@ if __name__ == "__main__":
     
     
     texto_prueba = """
+ Claro,Juan, aquí tienes un poema corto para la prueba de audio:
 
-Sistema iniciado. Hola, Juan. Todos los módulos funcionan al cien por ciento.
+En el jardín del tiempo,
+las horas son flores,
+cada pétalo un momento,
+con sus luces y colores.
 
-Hoy es un excelente día para organizar tus proyectos, revisar tu agenda o simplemente tomarte un café mientras planificamos el resto de la semana. Por cierto, ¿sabías que la luz del sol tarda exactamente ocho minutos y veinte segundos en llegar a la Tierra? Fascinante, ¿verdad?
+Por cierto, ¿sabías que la luz del Sol tarda aproximadamente ocho minutos y veinte segundos en llegar a la Tierra? Fascinante, ¿verdad?
 
-En fin, dime: ¿en qué vamos a trabajar hoy? """
+En fin, dime: ¿en qué vamos a trabajar hoy?"""
 
 
     print(f"[*] Enviando texto al motor de síntesis: '{texto_prueba}'")
