@@ -157,7 +157,7 @@ herramientas = [
         "parameters": {
             "type": "object",
             "properties": {
-                "name": {"type": "string", "description": "Nombre de la carpeta a eliminar, puede incluir subcarpetas"}
+                "name": {"type": "string", "description": "Consulta web a realizar"}
             },
             "required": ["name"]
         }
@@ -170,7 +170,8 @@ herramientas = [
 FUNCIONES_DISPONIBLES = {
     "create_folder": sys_actions.create_folder,
     "create_file": sys_actions.create_file,
-    "delete_folder": sys_actions.delete_folder
+    "delete_folder": sys_actions.delete_folder,
+    "search_web" : sys_actions.search_web
 }
 
 
