@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+from ddgs import DDGS #consultas web
 
 PATH = os.path.expanduser("~/bit_workspace")
 
@@ -67,9 +68,25 @@ def delete_folder(name: str)-> dict:
 
 
 def search_web(name:str)-> dict:
-    pass
+    results_list = []
+    results = DDG.text(name, max_results =5)
+    for r in results: 
+        item = {
+           "title": r['title'],
+           "url": r['href'],
+           "resume": r['body'] 
+        }
+    results_list.append(item)
+     
+        
+ 
+
+    
 
     
 
 
  
+
+
+

@@ -7,3 +7,5 @@ keyboard
 edge-tts
 faster_whisper
 pyfiglet
+duckduckgo_search
+ddgs
