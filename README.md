@@ -1,7 +1,6 @@
 # Bit (v2.0.1): The Audio-Visual Laboratory Copilot
 
-![Bit Logo](Bit_logo.png)
-
+<img src="Bit_logo.png" alt="Bit Logo" width="200">
 Bit is an on-demand, multi-modal AI copilot designed to run in your environment. Built for the terminal with a minimalist interface, Bit acts as a pervasive assistant that can analyze your workstation state (screen captures and microphone input) in real-time using Gemini 2.5 Flash, or operate in a lightweight, screen-free command mode to execute real actions on your system through structured tool calling.
 
 ---
