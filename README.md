@@ -1,4 +1,4 @@
-# Bit: The Audio-Visual Laboratory Copilot 
+# Bit (v2.1.0): The Audio-Visual Laboratory Copilot 
 
 Bit is an on-demand, multi-modal AI copilot designed to run in your environment. Built with a minimalist black-and-white graphical interface using Pygame, Bit acts as a pervasive assistant that analyzes your workstation state (screen captures and microphone input) in real-time using Gemini 2.5 Flash to deliver high-density, strategic engineering support.
 
