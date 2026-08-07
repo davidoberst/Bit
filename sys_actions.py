@@ -69,7 +69,7 @@ def delete_folder(name: str)-> dict:
 
 def search_web(name:str)-> dict:
     results_list = []
-    results = DDGS().text(name, max_results =5)
+    results = DDGS().text(name, max_results =10)
     for r in results: 
         item = {
            "title": r['title'],
